@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Figuras Geométricas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #controls {
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #controls input, #controls select {
+            margin: 5px 10px;
+        }
+
+        .canvas-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .canvas-wrapper {
+            width: 48%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        canvas, svg {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        select {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Generador de Figuras Geométricas</h1>
+
+        <div id="controls">
+            <label for="shape">Seleccionar figura:</label>
+            <select id="shape">
+                <option value="circle">Círculo</option>
+                <option value="rectangle">Rectángulo</option>
+                <option value="triangle">Triángulo</option>
+                <option value="line">Línea</option>
+            </select>
+
+            <label for="width">Ancho:</label>
+            <input type="number" id="width" value="100">
+
+            <label for="height">Alto:</label>
+            <input type="number" id="height" value="100">
+
+            <label for="x">Posición X:</label>
+            <input type="number" id="x" value="50">
+
+            <label for="y">Posición Y:</label>
+            <input type="number" id="y" value="50">
+
+            <label for="fillColor">Color de relleno:</label>
+            <input type="color" id="fillColor" value="#ff0000">
+
+            <label for="strokeColor">Color del borde:</label>
+            <input type="color" id="strokeColor" value="#000000">
+
+            <label for="strokeWidth">Grosor del borde:</label>
+            <input type="number" id="strokeWidth" value="2">
+
+            <label for="format">Formato:</label>
+            <select id="format">
+                <option value="raster">Rasterizada (Canvas)</option>
+                <option value="vector">Vectorizada (SVG)</option>
+            </select>
+
+            <button onclick="drawShape()">Dibujar Figura</button>
+        </div>
+
+        <div class="canvas-container">
+            <div class="canvas-wrapper">
+                <h2>Rasterizado (Canvas)</h2>
+                <canvas id="rasterCanvas" width="400" height="400"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+                <h2>Vectorizado (SVG)</h2>
+                <svg id="svgCanvas" viewBox="0 0 400 400"></svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function drawShape() {
+            const shapeType = document.getElementById('shape').value;
+            const width = parseInt(document.getElementById('width').value);
+            const height = parseInt(document.getElementById('height').value);
+            const x = parseInt(document.getElementById('x').value);
+            const y = parseInt(document.getElementById('y').value);
+            const fillColor = document.getElementById('fillColor').value;
+            const strokeColor = document.getElementById('strokeColor').value;
+            const strokeWidth = parseInt(document.getElementById('strokeWidth').value);
+            const format = document.getElementById('format').value;
+
+            if (format === 'raster') {
+                const canvas = document.getElementById('rasterCanvas');
+                const ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = fillColor;
+                ctx.strokeStyle = strokeColor;
+                ctx.lineWidth = strokeWidth;
+
+                switch (shapeType) {
+                    case 'circle':
+                        ctx.beginPath();
+                        ctx.arc(x + width / 2, y + height / 2, Math.min(width, height) / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'rectangle':
+                        ctx.fillRect(x, y, width, height);
+                        ctx.strokeRect(x, y, width, height);
+                        break;
+                    case 'triangle':
+                        ctx.beginPath();
+                        ctx.moveTo(x, y + height);
+                        ctx.lineTo(x + width / 2, y);
+                        ctx.lineTo(x + width, y + height);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'line':
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x + width, y + height);
+                        ctx.stroke();
+                        break;
+                    default:
+                        alert('Selecciona una figura válida.');
+                        return;
+                }
+            } else if (format === 'vector') {
+                const svg = document.getElementById('svgCanvas');
+                const shape = createSvgShape(shapeType, x, y, width, height, fillColor, strokeColor, strokeWidth);
+                svg.appendChild(shape);
+            }
+        }
+
+        function createSvgShape(type, x, y, width, height, fillColor, strokeColor, strokeWidth) {
+            let shape;
+
+            switch (type) {
+                case 'circle':
+                    shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    shape.setAttribute('cx', x + width / 2);
+                    shape.setAttribute('cy', y + height / 2);
+                    shape.setAttribute('r', Math.min(width, height) / 2);
+                    break;
+                case 'rectangle':
+                    shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    shape.setAttribute('x', x);
+                    shape.setAttribute('y', y);
+                    shape.setAttribute('width', width);
+                    shape.setAttribute('height', height);
+                    break;
+                case 'triangle':
+                    shape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                    shape.setAttribute('points', 
+                        `${x},${y + height} ${x + width / 2},${y} ${x + width},${y + height}`);
+                    break;
+                case 'line':
+                    shape = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    shape.setAttribute('x1', x);
+                    shape.setAttribute('y1', y);
+                    shape.setAttribute('x2', x + width);
+                    shape.setAttribute('y2', y + height);
+                    break;
+                default:
+                    alert('Selecciona una figura válida.');
+                    return null;
+            }
+
+            shape.setAttribute('fill', fillColor);
+            shape.setAttribute('stroke', strokeColor);
+            shape.setAttribute('stroke-width', strokeWidth);
+            return shape;
+        }
+    </script>
+
+</body>
+</html>
