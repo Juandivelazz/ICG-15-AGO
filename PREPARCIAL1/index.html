@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Polígonos</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #282c34;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            border: 1px solid #fff;
+        }
+        .controls {
+            margin: 20px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Polígonos</h1>
+        <div class="controls">
+            <form id="polygonForm">
+                <label for="sides">Número de lados:</label>
+                <input type="number" id="sides" name="sides" min="3" required>
+                <br>
+                <label for="size">Tamaño de lados:</label>
+                <input type="number" id="size" name="size" min="1" required>
+                <br>
+                <button type="button" onclick="generatePolygon()">Generar Figura</button>
+                <button type="button" onclick="clearCanvas()">Eliminar Figura</button>
+            </form>
+        </div>
+        <canvas id="polygonCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <script>
+        function generatePolygon() {
+            const sides = parseInt(document.getElementById('sides').value);
+            const size = parseFloat(document.getElementById('size').value);
+            const canvas = document.getElementById('polygonCanvas');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const angleStep = (2 * Math.PI) / sides;
+            const radius = size / (2 * Math.sin(Math.PI / sides));
+
+            if (sides < 3 || size <= 0) {
+                alert('Número de lados debe ser al menos 3 y tamaño de lados debe ser positivo.');
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Generar colores RGB aleatorios para cada vértice
+            function getRandomColor() {
+                return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+            }
+
+            const colors = [];
+            for (let i = 0; i < sides; i++) {
+                colors.push(getRandomColor());
+            }
+
+            // Ajustar el ángulo de rotación para que un lado esté horizontal
+            const rotationAngle = Math.PI / 2 - Math.PI / sides;
+
+            // Dibujar el polígono
+            ctx.beginPath();
+            for (let i = 0; i < sides; i++) {
+                const angle = i * angleStep + rotationAngle;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+
+            // Rellenar el polígono con colores en cada vértice
+            for (let i = 0; i < sides; i++) {
+                const angle1 = i * angleStep + rotationAngle;
+                const angle2 = (i + 1) * angleStep + rotationAngle;
+                const x1 = centerX + radius * Math.cos(angle1);
+                const y1 = centerY + radius * Math.sin(angle1);
+                const x2 = centerX + radius * Math.cos(angle2);
+                const y2 = centerY + radius * Math.sin(angle2);
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.closePath();
+
+                const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+                gradient.addColorStop(0, colors[i]);
+                gradient.addColorStop(1, colors[(i + 1) % sides]);
+                ctx.fillStyle = gradient;
+
+                ctx.fill();
+            }
+        }
+
+        function clearCanvas() {
+            const canvas = document.getElementById('polygonCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
