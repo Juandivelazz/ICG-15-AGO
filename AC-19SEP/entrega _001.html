@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primitivas Vectorizadas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .canvas-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        canvas {
+            border: 1px solid #333;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Primitivas Vectorizadas</h1>
+<div class="canvas-container">
+    <canvas id="lineaCanvas" width="200" height="200"></canvas>
+    <canvas id="circunferenciaCanvas" width="200" height="200"></canvas>
+    <canvas id="elipseCanvas" width="200" height="200"></canvas>
+</div>
+
+<script>
+    class Linea {
+        constructor(x1, y1, x2, y2) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+        }
+        dibujar(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            ctx.moveTo(this.x1, this.y1);
+            ctx.lineTo(this.x2, this.y2);
+            ctx.stroke();
+        }
+    }
+
+    class Circunferencia {
+        constructor(x, y, radio) {
+            this.x = x;
+            this.y = y;
+            this.radio = radio;
+        }
+        dibujar(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+    }
+
+    class Elipse {
+        constructor(x, y, radioX, radioY) {
+            this.x = x;
+            this.y = y;
+            this.radioX = radioX;
+            this.radioY = radioY;
+        }
+        dibujar(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            ctx.ellipse(this.x, this.y, this.radioX, this.radioY, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+    }
+
+    // Crear las primitivas y dibujarlas
+    const linea = new Linea(10, 10, 190, 10);
+    linea.dibujar('lineaCanvas');
+
+    const circunferencia = new Circunferencia(100, 100, 80);
+    circunferencia.dibujar('circunferenciaCanvas');
+
+    const elipse = new Elipse(100, 100, 80, 50);
+    elipse.dibujar('elipseCanvas');
+</script>
+
+</body>
+</html>
