@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primitivas Geométricas</title>
+    <style>
+        svg {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Primitivas Geométricas</h1>
+    <svg id="miSVG" width="600" height="400"></svg>
+    <script>
+        class Punto {
+            constructor(x, y) {
+                this.#x = x; // Atributo privado
+                this.#y = y; // Atributo privado
+            }
+
+            #x; // Atributo privado
+            #y; // Atributo privado
+
+            getX() {
+                return this.#x; // Método para obtener x
+            }
+
+            getY() {
+                return this.#y; // Método para obtener y
+            }
+        }
+
+        class Linea {
+            constructor(puntoInicio, puntoFin) {
+                this.#puntoInicio = puntoInicio; // Atributo privado
+                this.#puntoFin = puntoFin; // Atributo privado
+            }
+
+            #puntoInicio; // Atributo privado
+            #puntoFin; // Atributo privado
+
+            dibujar(svg) {
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", this.#puntoInicio.getX());
+                line.setAttribute("y1", this.#puntoInicio.getY());
+                line.setAttribute("x2", this.#puntoFin.getX());
+                line.setAttribute("y2", this.#puntoFin.getY());
+                line.setAttribute("stroke", "black");
+                line.setAttribute("stroke-width", "2");
+                svg.appendChild(line);
+            }
+        }
+
+        class Circunferencia {
+            constructor(centro, radio) {
+                this.#centro = centro; // Atributo privado
+                this.#radio = radio; // Atributo privado
+            }
+
+            #centro; // Atributo privado
+            #radio; // Atributo privado
+
+            dibujar(svg) {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", this.#centro.getX());
+                circle.setAttribute("cy", this.#centro.getY());
+                circle.setAttribute("r", this.#radio);
+                circle.setAttribute("stroke", "black");
+                circle.setAttribute("stroke-width", "2");
+                circle.setAttribute("fill", "none");
+                svg.appendChild(circle);
+            }
+        }
+
+        class Elipse {
+            constructor(centro, radioMayor, radioMenor) {
+                this.#centro = centro; // Atributo privado
+                this.#radioMayor = radioMayor; // Atributo privado
+                this.#radioMenor = radioMenor; // Atributo privado
+            }
+
+            #centro; // Atributo privado
+            #radioMayor; // Atributo privado
+            #radioMenor; // Atributo privado
+
+            dibujar(svg) {
+                const ellipse = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+                ellipse.setAttribute("cx", this.#centro.getX());
+                ellipse.setAttribute("cy", this.#centro.getY());
+                ellipse.setAttribute("rx", this.#radioMayor);
+                ellipse.setAttribute("ry", this.#radioMenor);
+                ellipse.setAttribute("stroke", "black");
+                ellipse.setAttribute("stroke-width", "2");
+                ellipse.setAttribute("fill", "none");
+                svg.appendChild(ellipse);
+            }
+        }
+
+        // Crear el SVG
+        const svg = document.getElementById('miSVG');
+
+        // Crear primitivas
+        const p1 = new Punto(50, 50);
+        const p2 = new Punto(200, 200);
+        const linea = new Linea(p1, p2);
+        linea.dibujar(svg);
+
+        const centroCirc = new Punto(300, 100);
+        const circunferencia = new Circunferencia(centroCirc, 50);
+        circunferencia.dibujar(svg);
+
+        const centroElipse = new Punto(400, 200);
+        const elipse = new Elipse(centroElipse, 80, 40);
+        elipse.dibujar(svg);
+    </script>
+</body>
+</html>
