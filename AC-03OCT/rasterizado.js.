@@ -1,0 +1,60 @@
+class Punto {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+function generarPuntos(numPuntos, ancho, alto) {
+    const puntos = [];
+    for (let i = 0; i < numPuntos; i++) {
+        puntos.push(new Punto(Math.random() * ancho, Math.random() * alto));
+    }
+    // Ordenar puntos en sentido horario
+    puntos.sort((a, b) => Math.atan2(a.y - alto / 2, a.x - ancho / 2) - Math.atan2(b.y - alto / 2, b.x - ancho / 2));
+    return puntos;
+}
+
+function calcularCentroide(puntos) {
+    const n = puntos.length;
+    const cx = puntos.reduce((sum, p) => sum + p.x, 0) / n;
+    const cy = puntos.reduce((sum, p) => sum + p.y, 0) / n;
+    return new Punto(cx, cy);
+}
+
+function trazarPoligonoCanvas(puntos, centroid) {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.moveTo(puntos[0].x, puntos[0].y);
+    puntos.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.closePath();
+    ctx.stroke();
+
+    if (centroid) {
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(centroid.x, centroid.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        puntos.forEach(p => {
+            ctx.beginPath();
+            ctx.moveTo(centroid.x, centroid.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.strokeStyle = 'red';
+            ctx.stroke();
+        });
+    }
+}
+
+function esConvexo(puntos) {
+    let signo = 0;
+    const n = puntos.length;
+
+    for (let i = 0; i < n; i++) {
+        const p1 = puntos[i];
+        const p2 = puntos[(i + 1) % n];
+        const p3 = puntos[(i + 2) % n];
+
+        const cross = (p2.x - p1.x
