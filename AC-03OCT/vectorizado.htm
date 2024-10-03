@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vectorizado - Computación Gráfica</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        svg {
+            border: 1px solid black;
+        }
+        h2 {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trazado de Polígono (Vectorizado)</h1>
+    <svg id="svg" width="400" height="400"></svg>
+    <button id="toggleCentroidSVG">Mostrar/Ocultar Centroide</button>
+    <p id="centroidInfoSVG" style="display: none;"></p>
+    <h2>Tipo de Polígono</h2>
+    <p id="tipoPoligono"></p>
+
+    <script src="vectorizado.js"></script>
+</body>
+</html>
